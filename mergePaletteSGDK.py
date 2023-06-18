@@ -110,25 +110,29 @@ def mergePicsSGDK():
         if pal_pic_paths[i] == "":
             continue
         shift_ind = palette_shifts[i]
+        shift_ind_mirr = palette_shifts_priority[i]
 
         cur_img = Image.open(pal_pic_paths[i])
         cur_img_pal = cur_img.getpalette()
 
         for j in range(16*3):
             temp_palette[(shift_ind*3)+j] = cur_img_pal[j]
+            temp_palette[(shift_ind_mirr*3)+j] = cur_img_pal[j]
         cur_img.close()
     
     #Merging palette from images WITH priority
     for i in range(len(pal_pic_paths_priority)):
         if pal_pic_paths_priority[i] == "":
             continue
-        shift_ind = palette_shifts_priority[i]
+        shift_ind = palette_shifts[i]
+        shift_ind_mirr = palette_shifts_priority[i]
 
         cur_img = Image.open(pal_pic_paths_priority[i])
         cur_img_pal = cur_img.getpalette()
 
         for j in range(16*3):
             temp_palette[(shift_ind*3)+j] = cur_img_pal[j]
+            temp_palette[(shift_ind_mirr*3)+j] = cur_img_pal[j]
         cur_img.close()
     
     resultImage.putpalette(temp_palette)

@@ -13,6 +13,7 @@ def indexedPaste(im1, im2, pal_shift):
             for y in range(0,8):
               for x in range(0,8):
                 if((px2[x + tileX * 8,y + tileY * 8 ]) != pal_shift):
+                # 
                     px1[x + tileX * 8,y + tileY * 8 ] = px2[x + tileX * 8,y + tileY * 8 ]
     return im1
     
@@ -170,9 +171,9 @@ def mergePicsSGDK():
               for x in range(0,8):
                 cur_px[x + tileX * 8,y + tileY * 8 ] += palette_shifts_priority[i]
         if pal_pic_mask_paths[i] == "":
-            indexedPaste(resultImage, cur_img, palette_shifts[i])
+            indexedPaste(resultImage, cur_img, palette_shifts_priority[i])
         else:
-            indexedPasteMask(resultImage, cur_img, pal_pic_mask_paths[i])
+            indexedPasteMask(resultImage, cur_img, pal_pic_paths_priority[i])
         cur_img.close()
     
     #Saving result

@@ -14,14 +14,16 @@ This tool allows you easily change palette of each tile on the map by combining 
 - Put images in **png** format, next to **SGDK Palette Merger**
 - Rename the images, according to this template
 ```
-imageName-settings.png
+imageName-palType_layerNum.png
 ```
 
-Where **settings** can be:
+Where **palType** can be:
 
-- **pal0-pal3** - for palettes (myLevel-pa1.png, myLevel-pal2.png)
-- **pal0_p-pal3_p** - for palettes with priority (myLevel-pa1_p.png, myLevel-pal2_p.png)
+- **pal0-pal3** - for palettes (myLevel-pa1_0.png, myLevel-pal2_1.png)
+- **pal0_p-pal3_p** - for palettes with priority (myLevel-pa1_p_3.png, myLevel-pal2_p_2.png)
 - **pal0_mask-pal3_mask** - when you want to use mask in merging alghorithm, by default, it's using 1st color of palette. And example: myLevel-pa1_mask.png, myLevel-pal2_mask.png
+
+**layerNum** - it's a number from **0** to **3**, where **0** is lowest layer, and **3** is highest. which specifies the order in which the image is inserted.
 
 And run this tool, you will get file **result.png**
 

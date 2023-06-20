@@ -27,6 +27,8 @@ Where **palType** can be:
 
 And run this tool, you will get file **result.png**
 
+![Example_pic1](https://github.com/bolon667/paletteMergerForSGDK/blob/main/gitImages/SGDK_PaletteMerger_1.jpg)
+
 ## License
 
 MIT

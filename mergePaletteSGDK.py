@@ -7,13 +7,24 @@ def indexedPaste(im1, im2, pal_shift):
     px2 = im2.load()
     cols = int(cur_img_size[0]/8)
     rows = int(cur_img_size[1]/8)
-
+    
+    used_tiles = [[0 for x in range(rows)] for y in range(cols)]
+    #Finding used tiles on image
     for tileX in range( 0, cols ):
         for tileY in range( 0, rows ):
             for y in range(0,8):
               for x in range(0,8):
                 if((px2[x + tileX * 8,y + tileY * 8 ]) != pal_shift):
-                # 
+                    #If, tile have pixel with not first color of palette, than, tile is used
+                    used_tiles[tileX][tileY] = 1
+                    break
+
+    #Pasting one tile on another if tile is used
+    for tileX in range( 0, cols ):
+        for tileY in range( 0, rows ):
+            for y in range(0,8):
+              for x in range(0,8):
+                if(used_tiles[tileX][tileY] == 1):
                     px1[x + tileX * 8,y + tileY * 8 ] = px2[x + tileX * 8,y + tileY * 8 ]
     return im1
     
@@ -40,6 +51,7 @@ def indexedPasteMask(im1, im2, mask_path):
 def mergePicsSGDK():
     print("Merging pics")
     pal_pic_paths = ["", "", "", ""]
+    pal_pic_layers = [-1, -1, -1, -1]
     pal_pic_paths_priority = ["", "", "", ""]
     pal_pic_mask_paths = ["", "", "", ""]
     
@@ -48,30 +60,52 @@ def mergePicsSGDK():
         if path.find("-") == -1:
             continue
         cur_pal = path.split("-")[1]
-        if(cur_pal == "pal0.png"):
+        cur_pal = cur_pal[:cur_pal.find(".")] #remove extension
+        layer_num = -1
+        if (cur_pal.find("_") != -1):
+            print(cur_pal, "settings")
+            settings_arr = cur_pal.split("_")
+            cur_pal = settings_arr[0] 
+            layer_num = int(settings_arr[1])
+            print(cur_pal, "settings2")
+        
+       
+        if(cur_pal == "pal0"):
             pal_pic_paths[0] = path
-        elif(cur_pal == "pal1.png"):
+            pal_pic_layers[0] = layer_num
+        elif(cur_pal == "pal1"):
             pal_pic_paths[1] = path
-        elif(cur_pal == "pal2.png"):
+            pal_pic_layers[1] = layer_num
+        elif(cur_pal == "pal2"):
             pal_pic_paths[2] = path
-        elif(cur_pal == "pal3.png"):
+            pal_pic_layers[2] = layer_num
+        elif(cur_pal == "pal3"):
             pal_pic_paths[3] = path
-        elif(cur_pal == "pal0_p.png"):
+            pal_pic_layers[3] = layer_num
+        elif(cur_pal == "pal0P"):
             pal_pic_paths_priority[0] = path
-        elif(cur_pal == "pal1_p.png"):
+            pal_pic_layers[0] = layer_num
+        elif(cur_pal == "pal1P"):
             pal_pic_paths_priority[1] = path
-        elif(cur_pal == "pal2_p.png"):
+            pal_pic_layers[1] = layer_num
+        elif(cur_pal == "pal2P"):
             pal_pic_paths_priority[2] = path
-        elif(cur_pal == "pal3_p.png"):
+            pal_pic_layers[2] = layer_num
+        elif(cur_pal == "pal3P"):
             pal_pic_paths_priority[3] = path
-        elif(cur_pal == "pal0_mask.png"):
+            pal_pic_layers[3] = layer_num
+        elif(cur_pal == "pal0Mask"):
             pal_pic_mask_paths[0] = path
-        elif(cur_pal == "pal1_mask.png"):
+            pal_pic_layers[0] = layer_num
+        elif(cur_pal == "pal1Mask"):
             pal_pic_mask_paths[1] = path
-        elif(cur_pal == "pal2_mask.png"):
+            pal_pic_layers[1] = layer_num
+        elif(cur_pal == "pal2Mask"):
             pal_pic_mask_paths[2] = path
-        elif(cur_pal == "pal3_mask.png"):
+            pal_pic_layers[2] = layer_num
+        elif(cur_pal == "pal3Mask"):
             pal_pic_mask_paths[3] = path
+            pal_pic_layers[3] = layer_num
     
     #Find first cur_image_size
     cur_img_size = (0,0)
@@ -140,45 +174,50 @@ def mergePicsSGDK():
     cols = int(cur_img_size[0]/8)
     rows = int(cur_img_size[1]/8)
 
-    
+    #ordering layers according to layer number
+    mergeOrder = [0,1,2,3]
+    for i in range(4):
+        layer_num = pal_pic_layers[i]
+        if layer_num == -1: #If layer is unspecified
+            continue
+        mergeOrder[i] = layer_num
+    mergeOrder = [0,1,2,3]
+    print("Merge order")
+    print(mergeOrder)
     #Merging images without priority
-    for i in range(len(pal_pic_paths)):
-        if pal_pic_paths[i] == "":
-            continue
-        print(pal_pic_paths[i])
-        cur_img = Image.open(pal_pic_paths[i])
-        cur_px = cur_img.load()
-        
-        for tileX in range( 0, cols ):
-          for tileY in range( 0, rows ) :
-            for y in range(0,8):
-              for x in range(0,8):
-                cur_px[x + tileX * 8,y + tileY * 8 ] += palette_shifts[i]
-        if pal_pic_mask_paths[i] == "":
-            indexedPaste(resultImage, cur_img, palette_shifts[i])
-        else:
-            indexedPasteMask(resultImage, cur_img, pal_pic_mask_paths[i])
-        
-        cur_img.close()
-    #Merging images with priority
-    
-    for i in range(len(pal_pic_paths_priority)):
-        if pal_pic_paths_priority[i] == "":
-            continue
-        print(pal_pic_paths_priority[i])
-        cur_img = Image.open(pal_pic_paths_priority[i])
-        cur_px = cur_img.load()
+    for cur_layer in range(4):
+        for i in range(4):
+            if(pal_pic_layers[i] != cur_layer):
+                continue
+            if pal_pic_paths[i] != "":
+                cur_img = Image.open(pal_pic_paths[i])
+                cur_px = cur_img.load()
+                
+                for tileX in range( 0, cols ):
+                  for tileY in range( 0, rows ) :
+                    for y in range(0,8):
+                      for x in range(0,8):
+                        cur_px[x + tileX * 8,y + tileY * 8 ] += palette_shifts[i]
+                if pal_pic_mask_paths[i] == "":
+                    indexedPaste(resultImage, cur_img, palette_shifts[i])
+                else:
+                    indexedPasteMask(resultImage, cur_img, pal_pic_mask_paths[i])
+                
+                cur_img.close()
+            if pal_pic_paths_priority[i] != "":
+                cur_img = Image.open(pal_pic_paths_priority[i])
+                cur_px = cur_img.load()
 
-        for tileX in range( 0, cols ):
-          for tileY in range( 0, rows ) :
-            for y in range(0,8):
-              for x in range(0,8):
-                cur_px[x + tileX * 8,y + tileY * 8 ] += palette_shifts_priority[i]
-        if pal_pic_mask_paths[i] == "":
-            indexedPaste(resultImage, cur_img, palette_shifts_priority[i])
-        else:
-            indexedPasteMask(resultImage, cur_img, pal_pic_paths_priority[i])
-        cur_img.close()
+                for tileX in range( 0, cols ):
+                  for tileY in range( 0, rows ) :
+                    for y in range(0,8):
+                      for x in range(0,8):
+                        cur_px[x + tileX * 8,y + tileY * 8 ] += palette_shifts_priority[i]
+                if pal_pic_mask_paths[i] == "":
+                    indexedPaste(resultImage, cur_img, palette_shifts_priority[i])
+                else:
+                    indexedPasteMask(resultImage, cur_img, pal_pic_paths_priority[i])
+                cur_img.close()
     
     #Saving result
     resultImage.save("result.png")

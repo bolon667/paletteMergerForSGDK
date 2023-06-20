@@ -20,10 +20,10 @@ imageName-palType_layerNum.png
 Where **palType** can be:
 
 - **pal0-pal3** - for palettes (myLevel-pa1_0.png, myLevel-pal2_1.png)
-- **pal0_p-pal3_p** - for palettes with priority (myLevel-pa1_p_3.png, myLevel-pal2_p_2.png)
-- **pal0_mask-pal3_mask** - when you want to use mask in merging alghorithm, by default, it's using 1st color of palette. And example: myLevel-pa1_mask.png, myLevel-pal2_mask.png
+- **pal0P-pal3P** - for palettes with priority (myLevel-pa1_p_3.png, myLevel-pal2_p_2.png)
+- **pal0Mask-pal3Mask** - when you want to use mask in merging alghorithm, by default, it's using 1st color of palette. And example: myLevel-pa1_mask.png, myLevel-pal2_mask.png
 
-**layerNum** - it's a number from **0** to **3**, where **0** is lowest layer, and **3** is highest. which specifies the order in which the image is inserted.
+**layerNum** - it's a number from **0** to **3**, where **0** is lowest layer, and **3** is highest. **layerNum** specifies the order in which the image is inserted.
 
 And run this tool, you will get file **result.png**
 
